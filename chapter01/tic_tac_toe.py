@@ -136,7 +136,7 @@ class Player:
         self.value = {}  # state-value pair
         self.happend_states = []  # store state during a one game
         self.greedy = []  # greedy[i] = True: greedy action; greedy[i] = False: exploration
-        # np.random.seed(random_seed)
+        np.random.seed(random_seed)
         self.value_init()
 
     def value_init(self):
@@ -193,16 +193,9 @@ class Player:
         """
         V(S_t) := V(S_t) + alpha * [V(S_t+1) - V(S_t)]
         """
-        # print(self.happend_states)
-        # print(self.greedy)
-        e = self.happend_states[-1]
-        b = all_states[e]
         for i in range(len(self.happend_states) - 2, 0, -1):
             current_state = self.happend_states[i]
             next_state = self.happend_states[i + 1]
-            c = self.value[current_state]
-            n = self.value[next_state]
-            b = all_states[next_state]
             self.value[current_state] += self.greedy[i] * self.step_size * (self.value[next_state] - self.value[current_state])
     
     def generate_path(self):
