@@ -7,6 +7,7 @@ LOWER = 6
 GAMMA = 0.99
 LENGTH = 1000
 DIM = 8
+LR = 0.01
 
 class Baird_MDP:
     def __init__(self):
@@ -37,7 +38,7 @@ def behaviour(MDP):
     action = np.random.choice(MDP.action_space, p=[6/7, 1/7])
     return action
 
-def learn_weights(MDP, behaviour, lr=0.01, max_step=LENGTH):
+def learn_weights(MDP, behaviour, lr=LR, max_step=LENGTH):
     weights_record = []
     w = [1, 1, 1, 1, 1, 1, 10, 1]
     w = np.array(w, dtype=np.float64)
@@ -55,7 +56,7 @@ def learn_weights(MDP, behaviour, lr=0.01, max_step=LENGTH):
         state = next_state
     return np.array(weights_record)
 
-def learn_weights_DP(MDP, lr=0.01, max_sweep=LENGTH):
+def learn_weights_DP(MDP, lr=LR, max_sweep=LENGTH):
     weigths_record = []
     w = [1, 1, 1, 1, 1, 1, 10, 1]
     w = np.array(w, dtype=np.float64)
@@ -85,7 +86,6 @@ def main():
                 y = weights_record_dp[:, d]
             ax.plot(x, y, label='w'+str(d + 1), color=colors[d])
     plt.legend(loc='upper left')
-    print(weights_record_dp[LENGTH-1][6])
     plt.show()
 
 if __name__ == '__main__':
