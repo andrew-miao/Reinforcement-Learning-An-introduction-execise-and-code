@@ -69,23 +69,40 @@ def learn_weights_DP(MDP, lr=LR, max_sweep=LENGTH):
         w -= lr * gradient
     return np.array(weigths_record)
 
+def target_state_occupancy(MDP, state):
+    if state == LOWER:
+        return (1 - MDP.gamma) / MDP.n_state + MDP.gamma
+    return (1 - MDP.gamma) / MDP.n_state
+
+def learn_weights_onpolicy_DP(MDP, lr=LR, max_sweep=LENGTH):
+    weigths_record = []
+    w = [1, 1, 1, 1, 1, 1, 10, 1]
+    w = np.array(w, dtype=np.float64)
+    for _ in range(max_sweep):
+        weigths_record.append(np.copy(w))
+        delta, semi_grad = 0, 0
+        for state in range(MDP.n_state):
+            delta += target_state_occupancy(MDP, state) * (MDP.gamma * np.dot(MDP.state_feature_matrix[LOWER], w) - np.dot(MDP.state_feature_matrix[state], w))
+            semi_grad += target_state_occupancy(MDP, state) * MDP.state_feature_matrix[state]
+        gradient = -delta * semi_grad
+        w -= lr * gradient
+    return np.array(weigths_record)
+
 def main():
     MDP = Baird_MDP()
     weights_record = learn_weights(MDP, behaviour)
     weights_record_dp = learn_weights_DP(MDP)
+    weights_record_onplicy_dp = learn_weights_onpolicy_DP(MDP)
+    plot_weights = [weights_record, weights_record_dp, weights_record_onplicy_dp]
     x = np.arange(LENGTH)
     colors = ['black', 'red', 'darksalmon', 'tan',
               'darkgreen', 'blue', 'darkorchid', 'goldenrod']
-    fig, (ax0, ax1) = plt.subplots(1, 2)
-    axs = (ax0, ax1)
+    fig, axs = plt.subplots(1, 3)
     for i, ax in enumerate(axs):
         for d in range(DIM):
-            if i == 0:
-                y = weights_record[:, d]
-            else:
-                y = weights_record_dp[:, d]
+            y = plot_weights[i][:, d]
             ax.plot(x, y, label='w'+str(d + 1), color=colors[d])
-    plt.legend(loc='upper left')
+    plt.legend(loc='center')
     plt.show()
 
 if __name__ == '__main__':
