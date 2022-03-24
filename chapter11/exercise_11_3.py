@@ -18,8 +18,8 @@ class Baird_MDP:
                           [0, 0, 0, 0, 2, 0, 0, 1],
                           [0, 0, 0, 0, 0, 2, 0, 1],
                           [0, 0, 0, 0, 0, 0, 1, 2]]
-        self.state_feature_matrix = np.array(feature_matrix, dtype=np.float64)
-        self.n_state = self.state_feature_matrix.shape[0]
+        self.state_feature = np.array(feature_matrix, dtype=np.float64)
+        self.n_state = self.state_feature.shape[0]
         self.lower = LOWER
         self.gamma = GAMMA
         self.action_space = np.array([DASHED, SOLID])
@@ -29,7 +29,7 @@ class Baird_MDP:
             next_state_id = np.random.randint(0, high=self.lower)
         else:
             next_state_id = self.lower
-        return self.state_feature_matrix[next_state_id]
+        return self.state_feature[next_state_id]
     
     def reward(self):
         return 0
@@ -43,7 +43,7 @@ def learn_weights(MDP, behaviour, lr=LR, max_step=LENGTH):
     w = [1, 1, 1, 1, 1, 1, 10, 1]
     w = np.array(w, dtype=np.float64)
     state_id = np.random.randint(0, high=MDP.n_state)
-    state = MDP.state_feature_matrix[state_id]
+    state = MDP.state_feature[state_id]
     for _ in range(max_step):
         weights_record.append(np.copy(w))
         action = behaviour(MDP)
@@ -64,7 +64,7 @@ def learn_weights_DP(MDP, lr=LR, max_sweep=LENGTH):
         weigths_record.append(np.copy(w))
         gradient = 0
         for state in range(MDP.n_state):
-            gradient += (MDP.reward() + MDP.gamma * np.dot(MDP.state_feature_matrix[LOWER], w) - np.dot(MDP.state_feature_matrix[state], w)) * MDP.state_feature_matrix[state]
+            gradient += (MDP.reward() + MDP.gamma * np.dot(MDP.state_feature[LOWER], w) - np.dot(MDP.state_feature[state], w)) * MDP.state_feature[state]
         gradient = -gradient / MDP.n_state
         w -= lr * gradient
     return np.array(weigths_record)
@@ -82,8 +82,8 @@ def learn_weights_onpolicy_DP(MDP, lr=LR, max_sweep=LENGTH):
         weigths_record.append(np.copy(w))
         delta, semi_grad = 0, 0
         for state in range(MDP.n_state):
-            delta += target_state_occupancy(MDP, state) * (MDP.gamma * np.dot(MDP.state_feature_matrix[LOWER], w) - np.dot(MDP.state_feature_matrix[state], w))
-            semi_grad += target_state_occupancy(MDP, state) * MDP.state_feature_matrix[state]
+            delta += target_state_occupancy(MDP, state) * (MDP.gamma * np.dot(MDP.state_feature[LOWER], w) - np.dot(MDP.state_feature[state], w))
+            semi_grad += target_state_occupancy(MDP, state) * MDP.state_feature[state]
         gradient = -delta * semi_grad
         w -= lr * gradient
     return np.array(weigths_record)
