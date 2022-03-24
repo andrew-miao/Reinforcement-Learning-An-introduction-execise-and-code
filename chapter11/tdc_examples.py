@@ -40,21 +40,20 @@ def behaviour(MDP):
 
 def compute_PBE(MDP, weights):
     gamma = MDP.gamma
-    D_pi = [(1 - gamma)/7, (1 - gamma)/7, (1 - gamma)/7, (1 - gamma)/7,
-            (1 - gamma)/7, (1 - gamma)/7, (1 - gamma)/7 + gamma]
+    D_pi = [1/7, 1/7, 1/7, 1/7,
+            1/7, 1/7, 1/7]
     D_pi = np.diag(D_pi)
     state = MDP.state_feature
     v_w = np.matmul(state, weights)
     delta = MDP.reward() + gamma * np.dot(state[LOWER].T, weights) - v_w
     state_D_delta = np.matmul(np.matmul(state.T, D_pi), delta)
     state_D_state = np.matmul(np.matmul(state.T, D_pi), state)
-    PBE = np.matmul(np.matmul(state_D_delta.T, np.linalg.pinv(state_D_state)), state_D_delta)
+    PBE = np.matmul(np.matmul(state_D_delta.T, np.linalg.inv(state_D_state)), state_D_delta)
     return PBE
 
 def compute_VE(MDP, weights):
-    gamma = MDP.gamma
-    D_pi = [(1 - gamma)/7, (1 - gamma)/7, (1 - gamma)/7, (1 - gamma)/7,
-            (1 - gamma)/7, (1 - gamma)/7, (1 - gamma)/7 + gamma]
+    D_pi = [1/7, 1/7, 1/7, 1/7,
+            1/7, 1/7, 1/7]
     D_pi = np.diag(D_pi)
     v_w = np.matmul(MDP.state_feature, weights)
     VE = np.matmul(np.matmul(v_w.T, D_pi), v_w)
@@ -114,6 +113,7 @@ def main():
     fig, axs = plt.subplots(1, 2, figsize=(8, 6))
     for i, ax in enumerate(axs):
         ax.title.set_text(title_list[i])
+        ax.axhline(y=0, color='black', linestyle='--')
         for d in range(DIM+2):
             if d < 8:
                 y = plot_curves[i]['weights'][:, d]

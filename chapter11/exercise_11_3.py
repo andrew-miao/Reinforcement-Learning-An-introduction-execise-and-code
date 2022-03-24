@@ -97,7 +97,7 @@ def main():
     x = np.arange(LENGTH)
     colors = ['black', 'red', 'darksalmon', 'tan',
               'darkgreen', 'blue', 'darkorchid', 'goldenrod']
-    fig, axs = plt.subplots(1, 3)
+    fig, axs = plt.subplots(1, 3, figsize=(8, 6))
     for i, ax in enumerate(axs):
         for d in range(DIM):
             y = plot_weights[i][:, d]
