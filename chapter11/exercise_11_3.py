@@ -98,8 +98,10 @@ def main():
     colors = ['black', 'red', 'darksalmon', 'tan',
               'darkgreen', 'blue', 'darkorchid', 'goldenrod']
     fig, axs = plt.subplots(1, 3, figsize=(8, 6))
+    xlabel_list = ['Steps', 'Sweeps', 'Sweeps']
     title_list = ['off-policy TD', 'off-policy DP', 'On-policy DP']
     for i, ax in enumerate(axs):
+        ax.set_xlabel(xlabel_list[i])
         ax.title.set_text(title_list[i])
         for d in range(DIM):
             y = plot_weights[i][:, d]

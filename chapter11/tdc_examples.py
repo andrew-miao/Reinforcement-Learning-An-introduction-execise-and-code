@@ -98,7 +98,7 @@ def expected_TDC(MDP, alpha=0.005, beta=0.05, max_sweep=LENGTH):
         u += beta * u_increment / MDP.n_state
         w += alpha * w_increment / MDP.n_state
     return np.array(PBE_record), np.array(VE_record), np.array(w_record)
-
+    
 def main():
     MDP = Baird_MDP()
     PBE_record, VE_record, w_records = TDC(MDP)
@@ -110,8 +110,10 @@ def main():
     plot_curves = [{'PBE': PBE_record, 'VE': VE_record, 'weights': w_records}, 
                     {'PBE': expected_PBE_record, 'VE': expected_VE_record, 'weights': expected_w_records}]
     title_list = ['TDC', 'Expected TDC']
+    xlabel_list = ['Steps', 'Sweeps']
     fig, axs = plt.subplots(1, 2, figsize=(8, 6))
     for i, ax in enumerate(axs):
+        ax.set_xlabel(xlabel_list[i])
         ax.title.set_text(title_list[i])
         ax.axhline(y=0, color='black', linestyle='--')
         for d in range(DIM+2):
